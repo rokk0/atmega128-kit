@@ -23,7 +23,6 @@
        
 *****************************************************************************/
 
-#include <util/delay.h>
 #include <inttypes.h>
 #include <avr/io.h>
 #include <avr/pgmspace.h>
@@ -136,7 +135,6 @@ static void lcd_write(uint8_t data,uint8_t rs)
 {
     unsigned char dataBits ;
 
-
     if (rs) {   /* write data        (RS=1, RW=0) */
        lcd_rs_high();
     } else {    /* write instruction (RS=0, RW=0) */
@@ -198,6 +196,7 @@ static void lcd_write(uint8_t data,uint8_t rs)
         LCD_DATA2_PORT |= _BV(LCD_DATA2_PIN);
         LCD_DATA3_PORT |= _BV(LCD_DATA3_PIN);
     }
+	delay(LCD_WRITE_DELAY);
 }
 #else
 #define lcd_write(d,rs) if (rs) *(volatile uint8_t*)(LCD_IO_DATA) = d; else *(volatile uint8_t*)(LCD_IO_FUNCTION) = d;

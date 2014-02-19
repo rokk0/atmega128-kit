@@ -59,6 +59,18 @@ sprintf(buffer, "Temp: %2.2f C", number);
 #define PIN_MASK_TOGGLE(port, mask) (PORT ## port ^= (mask))
 #define PIN_MASK_CHECK(port, mask) (PORT ## port & (mask))
 
+#define u08 unsigned char		// 0 to 255
+#define s08 signed char			// -128 to 127
+
+#define u16 unsigned int		// 0 to 65535
+#define s16 signed int			// -32768 to 32767
+
+#define u32 unsigned long int	// 0 to 4294967295
+#define s32 signed long int		// -2147483648 to 2147483647
+
+#define f32 float				// ±1.175e-38 to ±3.402e38
+#define d32 double				// ±1.175e-38 to ±3.402e38
+
 OUTPUT(D, 3); // port D, pin 3 as output
 PIN_SET(D, 3); // set port D pin 3 to HIGH
 if (PIN_CHECK(D, 3) == HIGH) {
@@ -89,6 +101,11 @@ if (PORTx & (1<<7)) {
 | 0001 | 0111 | 0110 |
 
 ##INTERRUPTS
+[Interrupts short and simple: Part 1 - Good programming practices](http://www.embedded.com/design/programming-languages-and-tools/4397803/Interrupts-short-and-simple--Part-1---Good-programming-practices)
+
+[Interrupts short & simple: Part 2 - Variables, buffers & latencies](http://www.embedded.com/design/programming-languages-and-tools/4398340/Interrupts-short---simple--Variables--buffers---latencies)
+
+[Interrupts short and simple: Part 3 - More interrupt handling tips](http://www.embedded.com/design/programming-languages-and-tools/4398710/Interrupts-short-and-simple--Part-3---More-interrupt-handling-tips)
 
 [AVRFreaks - Newbie's Guide to AVR Interrupts](http://www.avrfreaks.net/index.php?name=PNphpBB2&file=viewtopic&t=89843)
 
@@ -205,7 +222,9 @@ TCCR0 [bits COM01:0] - Compare Match Output Mode (Phase Correct PWM Mode):
 |   0   |   0   | Normal port operation, OC0 disconnected.
 |   0   |   1   | Reserved
 |   1   |   0   | Clear OC0 on compare match when up-counting. Set OC0 on compare match when downcounting.
-|   1   |   1   | Set OC0 on compare match when up-counting. Clear OC0 on compare match when downcounting.TCCR0 [bits CS02:0] - Clock Select:	
+|   1   |   1   | Set OC0 on compare match when up-counting. Clear OC0 on compare match when downcounting.
+
+TCCR0 [bits CS02:0] - Clock Select:	
 
 | CS02 | CS01 | CS00 | Description |
 |:----:|:----:|:----:| ----------- |
@@ -247,6 +266,32 @@ ISR (TIMER0_OVF_vect) {
 }
 ISR (TIMER1_COMPA_vect) {
 	// every 1 ms
+}
+```
+
+##WATCHDOG
+
+> The watchdog timer starts when the WDE bit is enabled and prescaler bits are configured for time-out condition. As watchdog timer reaches time-out condition, watchdog timer is reset and generates a pulse of one clock cycle which resets the program counter. When watch dog timer resets the timer, the WDRF (Watch Dog Reset Flag) bit in MCUCSR register is set by the hardware. To disable the watchdog timer following steps must be followed:
+
+1. Set the WDE and WDTOE bits in same clock cycle WDTCR register. The logic one must be written to WDE bit even though it is set to one already.
+
+2. After four clock pulses, write logic 0 to the WDE bit. Otherwise watchdog timer will not be disabled.
+
+```
+#include <avr/wdt.h>
+
+ISR (TIMER0_OVF_vect) {
+	s_timer++;
+	wdt_reset();
+}
+
+int main(void) {
+	wdt_enable(WDTO_2S); // restart MCU after 2s without wdt_reset
+
+	while(1) {
+		_delay_ms(3000); // MCU will be restarted, if delay > 2s
+		// wdt_disable();
+	}
 }
 ```
 
@@ -306,6 +351,50 @@ void eeprom_update_block (const void * pointer_ram , void * pointer_eeprom , siz
 ##NOTES
 
 The static keyword tells the compiler to allocate the variable as if it were file scope (like the global variables), but it won't be globally visible now because it's hidden in a function. The variable has an eternal life, but can't be accessed by just any function.  This also has the effect of creating a variable that won't change from function call to function call. Static functions are functions that are only visible to other functions in the same file.
+
+###volatile
+
+```
+/*
+Without volatile the optimizer is seeing that s_timer is never changed anywhere inside main. The optimizer does not realize 
+that s_timer can change inside main even if there are no instructions there which would cause s_timer value to change. 
+Therefore, it takes a copy of the s_timer global variable as the function begins, and it bases its comparisons on that copy. 
+
+The interrupt, in the meantime, is updating the original value of s_timer and main's copy of s_timer is left un-modified. 
+*/
+
+// this tells the two 'threads' (main execution loop and ISR code) to not 'cache' the value in a register, but always retrieve it from memory.
+volatile int s_timer = 0;
+
+ISR (TIMER0_OVF_vect) {
+	s_timer++;
+}
+
+void wait_for_done (void) {
+	// s_timer should to be volatile, to exit out of cycle
+	while (s_timer < 200) {
+		// do something
+	}
+}
+
+// For example, this code is wrong:
+int *volatile REGISTER = 0xfeed;
+*REGISTER = new_val;
+
+// To write clear, maintainable code using volatile, a reasonable idea is to build up more complex types using typedefs (of course this is a good idea anyway). 
+// We could first make a new type “vint” which is a volatile int:
+typedef volatile int vint;
+
+// Next, we create a pointer-to-vint:
+vint *REGISTER = 0xfeed;
+
+// We might ask, does it make sense to declare an object as both const and volatile?
+const volatile int *p;
+
+// Although this initially looks like a contradiction, it is not.  The semantics of const in C are “I agree not to try to store to it” rather than “it does not change”
+// So in fact this qualification is perfectly meaningful and would even be useful, for example, to declare a timer register that spontaneously changes value,
+// but that should not be stored to (this example is specifically pointed out in the C standard).
+```
 
 ###structures
 
@@ -380,6 +469,12 @@ fun1 = fun2; // initialize function pointer (required for calling)
 ```
 
 ###other
+
+```
+char const * a = "a"; // const data value
+char * const a = "a"; // const pointer value
+const char * const a = "a";
+```
 
 ```
 int y, x = 3;
