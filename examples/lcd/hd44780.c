@@ -41,7 +41,15 @@
 
 
 #if LCD_IO_MODE
-#define lcd_e_delay()   __asm__ __volatile__( "rjmp 1f\n 1:" );   //#define lcd_e_delay() __asm__ __volatile__( "rjmp 1f\n 1: rjmp 2f\n 2:" );
+// 2 machine cycles = 125ns for 16MHz (250ns for 8MHz)
+//#define lcd_e_delay()	__asm__ __volatile__( "rjmp 1f\n 1:" );
+//#define lcd_e_delay()	__asm__ __volatile__( "rjmp 1f\n 1: rjmp 2f\n 2:" );
+//#define delay_1_cycle()		__asm__ volatile ( "nop" );							// 1 cycle delay (62.5ns for 16MHz)
+#define delay_2_cycles()	__asm__ __volatile__( "rjmp 1f\n 1:" );					// 2 cycles delay (125ns for 16MHz)
+#define delay_3_cycles()	__asm__ volatile ( "lpm" );								// 3 cycles delay (187.5ns for 16MHz)
+#define delay_4_cycles()	__asm__ __volatile__( "rjmp 1f\n 1: rjmp 2f\n 2:" );	// 4 cycles delay (250ns for 16MHz)
+static __inline__ void lcd_e_delay (void) { delay_3_cycles(); } // 187ns
+
 #define lcd_e_high()    LCD_E_PORT  |=  _BV(LCD_E_PIN);
 #define lcd_e_low()     LCD_E_PORT  &= ~_BV(LCD_E_PIN);
 #define lcd_e_toggle()  toggle_e()
@@ -94,11 +102,11 @@ static void toggle_e(void);
 static inline void _delayFourCycles(unsigned int __count)
 {
     if ( __count == 0 )    
-        __asm__ __volatile__( "rjmp 1f\n 1:" );    // 2 cycles
+        __asm__ __volatile__( "rjmp 1f\n 1:" );    // 2 cycles (125ns for 16MHz, 250ns for 8MHz)
     else
         __asm__ __volatile__ (
     	    "1: sbiw %0,1" "\n\t"                  
-    	    "brne 1b"                              // 4 cycles/loop
+    	    "brne 1b"                              // 4 cycles/loop (250ns * (__count) = 250ns * (us * 4) = us * 1000ns)
     	    : "=w" (__count)
     	    : "0" (__count)
     	   );
@@ -109,7 +117,7 @@ static inline void _delayFourCycles(unsigned int __count)
 delay for a minimum of <us> microseconds
 the number of loops is calculated at compile-time from MCU clock frequency
 *************************************************************************/
-#define delay(us)  _delayFourCycles( ( ( 1*(XTAL/4000) )*us)/1000 )
+#define delay(us)  _delayFourCycles( ( ( 1*(F_CPU/4000) )*us)/1000 ) // _delayFourCycles(us * 4)
 
 
 #if LCD_IO_MODE
@@ -196,7 +204,6 @@ static void lcd_write(uint8_t data,uint8_t rs)
         LCD_DATA2_PORT |= _BV(LCD_DATA2_PIN);
         LCD_DATA3_PORT |= _BV(LCD_DATA3_PIN);
     }
-	delay(LCD_WRITE_DELAY);
 }
 #else
 #define lcd_write(d,rs) if (rs) *(volatile uint8_t*)(LCD_IO_DATA) = d; else *(volatile uint8_t*)(LCD_IO_FUNCTION) = d;
@@ -289,8 +296,14 @@ static uint8_t lcd_waitbusy(void)
     /* wait until busy flag is cleared */
     while ( (c=lcd_read(0)) & (1<<LCD_BUSY)) {}
     
+	// After execution of the CGRAM/DDRAM data write or read instruction, the RAM address counter
+	// is incremented or decremented by 1. The RAM address counter is updated after the busy flag turns off.
+	// tADD is the time elapsed after the busy flag turns off until the address counter is updated.
+	// tADD = 1.5/(fCP or fOSC) seconds
+	// 1,5 / 16.000.000 = 0.00000009375 (sec) = 93ns
     /* the address counter is updated 4us after the busy flag is cleared */
-    delay(2);
+    //delay(5);
+	//delay_2_cycles(); // 125ns
 
     /* now read the address counter */
     return (lcd_read(0));  // return address counter

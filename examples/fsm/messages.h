@@ -2,11 +2,11 @@
 #define MESSAGES_H_
 
 /* FSM MESSAGES */
-#define MSG_LED					0
-#define MSG_LCD					1
-#define MSG_SENSOR				2
-#define MSG_BUTTON				3
-#define MSG_MENU				4
+#define MSG_BUTTON				0
+#define MSG_MENU				1
+#define MSG_LCD					2
+#define MSG_SENSOR				3
+#define MSG_LED					4
 
 /* CONFIG */
 #define MAX_MESSAGES 			5

@@ -44,12 +44,17 @@
 #define LED2_OFF			(PORTD &= ~(1<<LED2))
 #define LED2_ON				(PORTD |= (1<<LED2))
 #define LED2_TOGGLE			(PORTD ^= (1<<LED2))
+// MIC
+#define MIC					PB1
+#define MIC_OFF				(PORTB &= ~(1<<PB1))
+#define MIC_ON				(PORTB |= (1<<PB1))
+#define MIC_TOGGLE			(PORTB ^= (1<<PB1))
 // LCD
 #define LCD_ROW_1			0
 #define LCD_ROW_2			1
 #define LCD_MAX_POS			16
 // Sensors
-#define DHT22				PD0
+#define DHT22				PB0
 #define SENSOR_DATA_CURRENT 0
 #define SENSOR_DATA_MIN		1
 #define SENSOR_DATA_MAX		2
@@ -57,12 +62,15 @@
 #define SYS_ERR_OK			0
 #define SYS_ERR_UNKNOWN		1
 // Time constants (ms)
-#define LCD_REFRESH_DELAY	400
-#define LED_BLINK_DELAY		500
-#define SENSOR_READ_DELAY	2000
-#define BUTTON_CHECK_DELAY	20
-#define MENU_SHOW_DELAY		3000
-#define MENU_REFRESH_DELAY	1000
+#define LCD_REFRESH_DELAY			200
+#define LED_BLINK_DELAY				500
+#define SENSOR_READ_DELAY			2000
+#define BUTTON_CHECK_DELAY			50
+#define BUTTON_DEBOUNCE_DELAY		25
+#define BUTTON_DOUBLE_CLICK_DELAY	300
+#define BUTTON_LONG_PRESS_DELAY		1000
+#define MENU_SHOW_DELAY				3000
+#define MENU_REFRESH_DELAY			1000
 
 /* CONSTANTS IN FLASH MEMORY */
 #define P_CLOCK_STR			"%02ld:%02ld:%02ld" // leading zero, precision 2, long type

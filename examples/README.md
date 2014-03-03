@@ -469,6 +469,15 @@ fun1 = fun2; // initialize function pointer (required for calling)
 ```
 
 ###other
+```
+// 2 machine cycles - 125ns (NOT us) for a 16MHz AVR. (250ns for 8MHz)
+__asm__ __volatile__( "rjmp 1f\n 1:" ); // 2 cycles
+static __inline__ void _NOP1 (void) { __asm__ volatile ( "nop"); } 
+static __inline__ void _NOP2 (void) { __asm__ volatile ( "rjmp 1f\n 1:"); } 
+static __inline__ void _NOP3 (void) { __asm__ volatile ( "lpm"); } 
+static __inline__ void _NOP4 (void) { _NOP3(); _NOP1(); } 
+static __inline__ void _NOP5 (void) { _NOP3(); _NOP2(); }
+```
 
 ```
 char const * a = "a"; // const data value

@@ -33,7 +33,6 @@ PGM_P const err_strings[] PROGMEM = { err_str_0 };
 void lcd_screen_refresh(char clear) {
 	lcd_clrscr();
 	if (clear) { return; }
-
 	lcd_gotoxy(0, LCD_ROW_1);
 	lcd_puts(lcd_screen_buff.row1);
 	lcd_gotoxy(0, LCD_ROW_2);
@@ -41,18 +40,17 @@ void lcd_screen_refresh(char clear) {
 }
 
 void lcd_screen_buff_update(char row, char col, char *str) {
-	//cli();
 	switch(row) {
 		case LCD_ROW_1: { memmove((lcd_screen_buff.row1 + col), str, strlen(str)); } break;
 		case LCD_ROW_2: { memmove((lcd_screen_buff.row2 + col), str, strlen(str)); } break;
 		default: {} break;
 	}
- 	//sei();
 }
 
 void lcd_buff_clear() {
 	memset(lcd_screen_buff.row1, ' ', LCD_MAX_POS);
 	memset(lcd_screen_buff.row2, ' ', LCD_MAX_POS);
+	// add NULL terminated strings
 	lcd_screen_buff.row1[LCD_MAX_POS-1] = '\0';
 	lcd_screen_buff.row2[LCD_MAX_POS-1] = '\0';
 }
@@ -153,7 +151,6 @@ ISR (INT6_vect) {
 
 ISR (INT7_vect) {
 	send_message_w_param(MSG_BUTTON, _BUTTON_4);
-	reset_timer(TIMER_BUTTON);
 } // Button 4: LED 2
 
 /* TIMER INTERRUPT HANDLERS */
@@ -173,7 +170,8 @@ inline void init_gpio() {
 	DDRE = ~BUTTONS;			// buttons
 	PORTE = BUTTONS;			// enable pull-up (logic 1 by default)
 	DDRD = (1<<LED1)|(1<<LED2);	// output for LEDs
-	DDRD &= ~(1<<DHT22);		// input for DHT22
+	DDRB &= ~(1<<DHT22);		// input for DHT22
+	DDRB = (1<<MIC);	// output for LEDs
 }
 
 inline void init_interrupts_timers() {
@@ -187,16 +185,27 @@ inline void init_interrupts_timers() {
 	TIMSK = (1<<TOIE0);							// enable overflow interrupt (TIMER0_OVF_vect)
 	TCCR0 = (0<<WGM01)|(0<<WGM00);				// timer 0 mode - Normal
 	TCCR0 |= (1<<CS02)|(0<<CS01)|(1<<CS00);		// timer 0 pre-scaler (32.768 / 128 = 256 ticks per second)
-	
+
 	//TCNT1 = 0;								// timer 1 start value of counter (from 0 to 65535) - 1 second (when reaches 15.624)
-	OCR1A = 15;									// timer 1 top value A for compare interrupt calling - 1 millisecond (15.625 / 1000 = 15)
+	OCR1A = 250;								// timer 1 top value A for compare interrupt calling - 1 millisecond (15.625 / 1000 = 15)
 	TIMSK |= (1<<OCIE1A);						// enable compare interrupt (TIMER1_COMPA_vect)
 	TCCR1B = (0<<WGM13)|(1<<WGM12);				// timer 1 mode - CTC (OCRnA TOP)
-	TCCR1B |= (1<<CS12)|(0<<CS11)|(1<<CS10);	// timer 1 (another mask <!>) pre-scaler (16.000.000 / 1024 = 15.625 ticks per second)
+	TCCR1B |= (0<<CS12)|(1<<CS11)|(1<<CS10);	// timer 1 (another mask <!>) pre-scaler (16.000.000 / 64 = 250,000 ticks per second)
+/*
+	0 0 0 No clock source. (Timer/Counter stopped)
+	0 0 1 1 (No pre-scaling)
+	0 1 0 8
+	0 1 1 64
+	1 0 0 256
+	1 0 1 1024
+	1 1 0 External clock source on Tn pin. Clock on falling edge
+	1 1 1 External clock source on Tn pin. Clock on rising edge
+*/
 }
 
 void init() {
-	cli();
+	cli(); // disable interrupts
+
 	/* 1 SEC WATCHDOG TIMEOUT */
 	wdt_enable(WDTO_1S);
 
@@ -211,13 +220,13 @@ void init() {
 	init_interrupts_timers();
 	init_messages();
 	lcd_init(LCD_DISP_ON);
-	
+
 	/* FSM INITIALIZATION */
-	fsm_led_init(_LED_ON);
-	fsm_lcd_init(_LCD_ON);
-	fsm_sensor_init(_SENSOR_READ);
 	fsm_button_init(_BUTTON_OFF);
 	fsm_menu_init(_MENU_MAIN);
+	fsm_lcd_init(_LCD_ON);
+	fsm_sensor_init(_SENSOR_READ);
+	//fsm_led_init(_LED_ON);
 
 	sei(); // enable interrupts
 }
@@ -230,11 +239,11 @@ int main(void) {
 		process_timers(&ms_timer);
 
 		/* RUN FSM TASKS */
-		fsm_led();
-		fsm_lcd();
-		fsm_sensor();
 		fsm_button();
 		fsm_menu();
+		fsm_lcd();
+		fsm_sensor();
+		//fsm_led();
 
 		// Process FSM messages
 		process_messages();

@@ -7,14 +7,17 @@
 #define HOUR 			60 * min
 
 /* FSM TIMERS */
-#define TIMER_LED 		0
-#define TIMER_LCD 		1
-#define TIMER_SENSOR 	2
-#define TIMER_BUTTON 	3
-#define TIMER_MENU	 	4
+#define TIMER_BUTTON			0
+#define TIMER_BUTTON_DEBOUNCE 	1
+#define TIMER_BUTTON_DOUBLE		2
+#define TIMER_BUTTON_LONG		3
+#define TIMER_MENU	 			4
+#define TIMER_LCD 				5
+#define TIMER_SENSOR 			6
+#define TIMER_LED 				7
 
 /* CONFIG */
-#define MAX_TIMERS 		5
+#define MAX_TIMERS 				8
 
 //#define USE_GLOBAL_TIMERS
 #ifdef USE_GLOBAL_TIMERS
