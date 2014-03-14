@@ -1,0 +1,724 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>6.1</ProjectVersion>
+    <ToolchainName>com.Atmel.AVRGCC8.C</ToolchainName>
+    <ProjectGuid>{b9905741-cd43-4496-9e0f-b13047610068}</ProjectGuid>
+    <avrdevice>ATmega128</avrdevice>
+    <avrdeviceseries>none</avrdeviceseries>
+    <OutputType>StaticLibrary</OutputType>
+    <Language>C</Language>
+    <OutputFileName>lib$(MSBuildProjectName)</OutputFileName>
+    <OutputFileExtension>.a</OutputFileExtension>
+    <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
+    <AvrGccProjectExtensions>
+    </AvrGccProjectExtensions>
+    <AssemblyName>m2u8</AssemblyName>
+    <Name>m2u8</Name>
+    <RootNamespace>m2u8</RootNamespace>
+    <ToolchainFlavour>Native</ToolchainFlavour>
+    <KeepTimersRunning>true</KeepTimersRunning>
+    <OverrideVtor>false</OverrideVtor>
+    <CacheFlash>true</CacheFlash>
+    <ProgFlashFromRam>true</ProgFlashFromRam>
+    <RamSnippetAddress>0x20000000</RamSnippetAddress>
+    <UncachedRange />
+    <OverrideVtorValue>exception_table</OverrideVtorValue>
+    <BootSegment>2</BootSegment>
+    <eraseonlaunchrule>0</eraseonlaunchrule>
+    <AsfFrameworkConfig>
+      <framework-data xmlns="">
+  <options />
+  <configurations />
+  <files />
+  <documentation help="" />
+  <offline-documentation help="" />
+  <dependencies>
+    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.14.0" />
+  </dependencies>
+</framework-data>
+    </AsfFrameworkConfig>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <ToolchainSettings>
+      <AvrGcc>
+  <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
+  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcc.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>NDEBUG</Value>
+    </ListValues>
+  </avrgcc.compiler.symbols.DefSymbols>
+  <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+  <avrgcc.linker.libraries.Libraries>
+    <ListValues>
+      <Value>libm</Value>
+    </ListValues>
+  </avrgcc.linker.libraries.Libraries>
+</AvrGcc>
+    </ToolchainSettings>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <ToolchainSettings>
+      <AvrGcc>
+  <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
+  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcc.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>DEBUG</Value>
+      <Value>F_CPU=16000000UL</Value>
+    </ListValues>
+  </avrgcc.compiler.symbols.DefSymbols>
+  <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
+  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+  <avrgcc.linker.libraries.Libraries>
+    <ListValues>
+      <Value>libm</Value>
+    </ListValues>
+  </avrgcc.linker.libraries.Libraries>
+  <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
+</AvrGcc>
+    </ToolchainSettings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="chessengine.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2align.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2dfs.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2draw.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2eh2bd.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2eh2bs.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2eh4bd.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2eh4bs.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2eh6bs.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ehts.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2el2lmenu.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elalign.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elbutton.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elbuttonptr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elcombo.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elcombofn.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elcomboptr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elfnfmt.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elhide.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elinfo.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ellabel.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ellabelfn.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ellabelp.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ellabelptr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ellistbase.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ellistcalc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ellistgrid.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ellisth.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ellistv.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ellistxy.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elradio.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elroot.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2els8base.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2els8num.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elsb.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elsetval.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elslbase.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elspace.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elstr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elstrlist.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elstrptr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elstrup.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elsubutl.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2eltext.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2eltoggle.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2eltsk.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elu32.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elu8base.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elu8hs.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elu8num.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2elxbm.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2esavru8g.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2fnarg.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2gfx.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2gfxutl.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ghdummy.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ghu8g.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ghu8gbf.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ghu8gbfs.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ghu8gcffs.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ghu8gfb.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ghu8gffs.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ghu8gicon.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2ghu8gutl.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2key.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2msg.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2navdatadn.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2navdataup.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2navfirst.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2navinit.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2navlast.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2navnext.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2navprev.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2navroot.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2navupdn.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2navutl.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2null.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2obj.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2opt.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2pin.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2qk.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2rom.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2usrnext.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2usrprev.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2usrupdn.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2utl.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2utls8d.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2utlstrdat.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m2utlu8d.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mas.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mas.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mas_pff.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mas_sim.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="pff.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="pff.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="pff_atmega_io.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="pff_diskio.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="pff_diskio.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="pff_integer.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="pff_io.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_bitmap.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_circle.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_clip.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_api.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_api_16gr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_arduino_attiny85_hw_spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_arduino_common.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_arduino_fast_parallel.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_arduino_hw_spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_arduino_hw_usart_spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_arduino_no_en_parallel.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_arduino_parallel.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_arduino_port_d_wr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_arduino_ssd_i2c.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_arduino_st7920_custom.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_arduino_st7920_hw_spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_arduino_st7920_spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_arduino_std_sw_spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_arduino_sw_spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_arduino_t6963.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_atmega_hw_spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_atmega_parallel.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_atmega_st7920_hw_spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_atmega_st7920_spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_atmega_sw_spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_i2c.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_io.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_com_null.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_cursor.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_delay.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_a2_micro_printer.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_flipdisc_2x7.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_gprof.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_ht1632.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_ili9325d_320x240.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_ks0108_128x64.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_lc7981_160x80.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_lc7981_240x128.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_lc7981_240x64.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_lc7981_320x64.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_null.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_pcd8544_84x48.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_pcf8812_96x65.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_sbn1661_122x32.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_ssd1306_128x32.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_ssd1306_128x64.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_ssd1309_128x64.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_ssd1322_nhd31oled_bw.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_ssd1322_nhd31oled_gr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_ssd1325_nhd27oled_bw.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_ssd1325_nhd27oled_bw_new.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_ssd1325_nhd27oled_gr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_ssd1325_nhd27oled_gr_new.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_ssd1327_96x96_gr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_ssd1351_128x128.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_st7565_64128n.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_st7565_dogm128.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_st7565_dogm132.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_st7565_lm6059.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_st7565_lm6063.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_st7565_nhd_c12832.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_st7565_nhd_c12864.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_st7687_c144mvgd.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_st7920_128x64.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_st7920_192x32.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_st7920_202x32.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_t6963_128x64.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_t6963_240x128.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_t6963_240x64.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_tls8204_84x48.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_uc1601_c128032.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_uc1608_240x64.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_uc1610_dogxl160.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_uc1701_dogs102.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_dev_uc1701_mini12864.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_ellipse.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_font.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_font_data.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_line.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_ll_api.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_page.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_pb.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_pb14v1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_pb16h1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_pb16h2.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_pb16v1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_pb16v2.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_pb32h1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_pb8h1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_pb8h1f.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_pb8h2.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_pb8h8.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_pb8v1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_pb8v2.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_pbxh16.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_pbxh24.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_polygon.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_rect.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_rot.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_scale.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_state.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_u16toa.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_u8toa.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="u8g_virtual_screen.c">
+      <SubType>compile</SubType>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
+</Project>

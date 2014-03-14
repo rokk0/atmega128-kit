@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Atmel Studio Solution File, Format Version 11.00
 Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "examples", "examples\examples.cproj", "{CD3AA2FE-42D1-4AEB-B62C-006EF8E7E9E4}"
 EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "m2u8", "m2u8\m2u8.cproj", "{B9905741-CD43-4496-9E0F-B13047610068}"
+EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "menu", "menu\menu.cproj", "{B2F1741D-7A8A-40A2-901C-2C08478F87AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|AVR = Debug|AVR
@@ -13,6 +17,14 @@ Global
 		{CD3AA2FE-42D1-4AEB-B62C-006EF8E7E9E4}.Debug|AVR.Build.0 = Debug|AVR
 		{CD3AA2FE-42D1-4AEB-B62C-006EF8E7E9E4}.Release|AVR.ActiveCfg = Release|AVR
 		{CD3AA2FE-42D1-4AEB-B62C-006EF8E7E9E4}.Release|AVR.Build.0 = Release|AVR
+		{B9905741-CD43-4496-9E0F-B13047610068}.Debug|AVR.ActiveCfg = Debug|AVR
+		{B9905741-CD43-4496-9E0F-B13047610068}.Debug|AVR.Build.0 = Debug|AVR
+		{B9905741-CD43-4496-9E0F-B13047610068}.Release|AVR.ActiveCfg = Release|AVR
+		{B9905741-CD43-4496-9E0F-B13047610068}.Release|AVR.Build.0 = Release|AVR
+		{B2F1741D-7A8A-40A2-901C-2C08478F87AE}.Debug|AVR.ActiveCfg = Debug|AVR
+		{B2F1741D-7A8A-40A2-901C-2C08478F87AE}.Debug|AVR.Build.0 = Debug|AVR
+		{B2F1741D-7A8A-40A2-901C-2C08478F87AE}.Release|AVR.ActiveCfg = Release|AVR
+		{B2F1741D-7A8A-40A2-901C-2C08478F87AE}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
