@@ -466,6 +466,24 @@ double fun2(int k, int l);
 
 fun1 = fun2; // initialize function pointer (required for calling)
 (*fun1)(2,7); // call function by pointer
+
+void Foo( int * ptr,
+			int const * ptrToConst,
+			int * const constPtr,
+			int const * const constPtrToConst )
+{
+	*ptr = 0; // OK: modifies the "pointee" data
+	ptr  = NULL; // OK: modifies the pointer
+
+	*ptrToConst = 0; // Error! Cannot modify the "pointee" data
+	ptrToConst  = NULL; // OK: modifies the pointer
+
+	*constPtr = 0; // OK: modifies the "pointee" data
+	constPtr  = NULL; // Error! Cannot modify the pointer
+
+	*constPtrToConst = 0; // Error! Cannot modify the "pointee" data
+	constPtrToConst  = NULL; // Error! Cannot modify the pointer
+}
 ```
 
 ###other
