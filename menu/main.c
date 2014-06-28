@@ -2,14 +2,17 @@
 
 u8g_t u8g;
 
+const char cpu_freq_str_P[] PROGMEM = "CPU Frequency: ";
+const char cpu_freq_val_str_P[] PROGMEM = "16 MHz";
+const char pwm_top_str_P[] PROGMEM = "PWM (TOP + 1): ";
+const char pwm_freq_str_P[] PROGMEM = "PWM Frequency: ";
+
 // Fast PWM: fOCnxPWM = fclk / ( pre-scaler * (1 + TOP) )
 // 16 000 000 / ( 1 * (1 + 255) ) = 62 500 Hz (1 period of PWM)
 // Phace Correct PWM: fOCnxPCPWM = fclk / ( 2 * pre-scaler * TOP )
 // 16 000 000 / ( 2 * 1 * 255) ) = 31 372 Hz (1 period of PWM)
-
 // 16 000 000 / 32 000 = 500 Hz
-#define PWM_COUNTER_TOP	32000
-#define TEN_PERCENTS	PWM_COUNTER_TOP / 10
+//uint32_t pwm_counter_top = 32000;
 
 // PWM init values
 #define PWM_PIN_CNT 3
@@ -24,31 +27,72 @@ uint8_t pwm_menu_duty;
 
 unsigned int pwm_duty = 0;
 
+uint32_t pwm_counter_top = 31999;
+uint32_t tmp_opt_menu_pwm_top = 32000;
+uint32_t ten_percents = 3199;
+char tmp_menu_pwm_freq_label[9] = "500 Hz";
+
 // PWM chart
 #define PWM_CHART_HEIGHT 10
 
-uint8_t tmp_opt_menu_zoom = 1;
 uint8_t pwm_zoom_idx = 1;
-uint8_t pwm_cycle_width = 16;	// pixels
-uint8_t pwm_samples_count = 8;	// (128 / pwm_cycle_width)
+uint8_t pwm_cycle_width = 32;	// pixels
+uint8_t pwm_samples_count = 4;	// (128 / pwm_cycle_width)
 
 uint8_t chart_samples[PWM_PIN_CNT][8];
 
 // forward declaration of the root menu
 M2_EXTERN_ALIGN(top_el_root_menu);
 
-void my_strcpy(char *s, const char *t) {
-	while((*s++ = *t++) != '\0');
+void pwm_duty_index_to_str(uint8_t value, char *dest) {
+	switch(value) {
+		case 0: strcpy(dest, "low"); break;
+		case 1: strcpy(dest, "10%"); break;
+		case 2: strcpy(dest, "20%"); break;
+		case 3: strcpy(dest, "30%"); break;
+		case 4: strcpy(dest, "40%"); break;
+		case 5: strcpy(dest, "50%"); break;
+		case 6: strcpy(dest, "60%"); break;
+		case 7: strcpy(dest, "70%"); break;
+		case 8: strcpy(dest, "80%"); break;
+		case 9: strcpy(dest, "90%"); break;
+		case 10: strcpy(dest, "high"); break;
+	}
+}
+
+unsigned int pwm_duty_index_to_analog(uint8_t index) {
+	switch(index) {
+		case 0: return 0;
+		case 1: return ten_percents;
+		case 2: return ten_percents * 2;
+		case 3: return ten_percents * 3;
+		case 4: return ten_percents * 4;
+		case 5: return ten_percents * 5;
+		case 6: return ten_percents * 6;
+		case 7: return ten_percents * 7;
+		case 8: return ten_percents * 8;
+		case 9: return ten_percents * 9;
+	}
+	return pwm_counter_top;
+}
+
+void pwm_save_duty(uint8_t pwm_pin, uint8_t pwm_menu_duty) {
+	pwm_duty = pwm_duty_index_to_analog(pwm_menu_duty);
+	switch (pwm_pin) {
+		case 5: OCR1A = pwm_duty; break;
+		case 6: OCR1B = pwm_duty; break;
+		case 7: OCR1C = pwm_duty; break;
+	}
 }
 
 // GENERAL OPTIONS MENU
 /******************************************************************************/
 void pwm_zoom_index_to_str(uint8_t value, char *dest) {
 	switch(value) {
-		case 0: my_strcpy(dest, " X1"); break;
-		case 1: my_strcpy(dest, " X2"); break;
-		case 2: my_strcpy(dest, " X4"); break;
-		case 3: my_strcpy(dest, " X8"); break;
+		case 0: strcpy(dest, " X1"); break;
+		case 1: strcpy(dest, " X2"); break;
+		case 2: strcpy(dest, " X4"); break;
+		case 3: strcpy(dest, " X8"); break;
 	}
 }
 
@@ -61,12 +105,20 @@ uint8_t pwm_zoom_index_to_pixels(uint8_t index) {
 	return 128;
 }
 
+void change_pwm_freq() {
+	itoa((int)(16000000 / tmp_opt_menu_pwm_top), tmp_menu_pwm_freq_label, 10);
+	strcat(tmp_menu_pwm_freq_label, " Hz");
+}
+
 // this procedure is called by the "ok" button
 void opt_fn_ok(m2_el_fnarg_p fnarg) {
 	// save user entry	
-	tmp_opt_menu_zoom = pwm_zoom_idx;
-	pwm_cycle_width = pwm_zoom_index_to_pixels(pwm_zoom_idx);
-	pwm_samples_count = 128 / pwm_cycle_width;
+	pwm_counter_top = tmp_opt_menu_pwm_top - 1;
+	ten_percents = pwm_counter_top / 10;
+	ICR1 = pwm_counter_top;
+	pwm_save_duty(5, pwm_duty_array[0]);
+	pwm_save_duty(6, pwm_duty_array[1]);
+	pwm_save_duty(7, pwm_duty_array[2]);
 
 	// go back to parent menu
 	m2_SetRoot(&top_el_root_menu);
@@ -75,22 +127,35 @@ void opt_fn_ok(m2_el_fnarg_p fnarg) {
 // this procedure is called by the "ok" button
 void opt_fn_cancel(m2_el_fnarg_p fnarg) {
 	// reset menu value
-	pwm_zoom_idx = tmp_opt_menu_zoom;
+	tmp_opt_menu_pwm_top = pwm_counter_top + 1;
+	change_pwm_freq();
 
 	// go back to parent menu
 	m2_SetRoot(&top_el_root_menu);
 }
 
-// this will return a user readable string for the internal value
-const char *opt_fn_zoom(uint8_t idx) {
-	static char buf[4];
-	pwm_zoom_index_to_str(idx, buf);
-	return buf;
+void pwm_top_inc(m2_el_fnarg_p fnarg) {
+	if (tmp_opt_menu_pwm_top < 99000) tmp_opt_menu_pwm_top += 1000;
+	change_pwm_freq();
 }
 
-// zoom field can be changed by the user
-M2_LABEL(el_opt_zoom_label, NULL, "Zoom:");
-M2_COMBO(el_opt_zoom, NULL, &pwm_zoom_idx, 4, opt_fn_zoom);
+void pwm_top_dec(m2_el_fnarg_p fnarg) {
+	if (tmp_opt_menu_pwm_top > 10000) tmp_opt_menu_pwm_top -= 1000;
+	change_pwm_freq();
+}
+
+M2_LABELP(el_opt_clck_label, NULL, cpu_freq_str_P);
+M2_LABELP(el_opt_clck_val_label, NULL, cpu_freq_val_str_P);
+
+M2_LABELP(el_opt_pwm_top_label, NULL, pwm_top_str_P);
+M2_U32NUM(el_opt_pwm_top, "r1c5x5y1", &tmp_opt_menu_pwm_top);
+M2_BUTTON(el_opt_pwm_top_dec, "x0y1", "-", pwm_top_dec);
+M2_BUTTON(el_opt_pwm_top_inc, "x30y1", "+", pwm_top_inc);
+M2_LIST(pwm_top_list) = { &el_opt_pwm_top, &el_opt_pwm_top_dec, &el_opt_pwm_top_inc };
+M2_XYLIST(el_pwm_top_list, NULL, pwm_top_list);
+
+M2_LABELP(el_opt_pwm_freq_label, NULL, pwm_freq_str_P);
+M2_LABEL(el_opt_pwm_freq_val_label, NULL, tmp_menu_pwm_freq_label);
 
 // cancel: do not store user values, go back directly
 M2_BUTTON(el_opt_cancel, "f4", "Cancel", opt_fn_cancel);
@@ -99,7 +164,9 @@ M2_BUTTON(el_opt_ok, "f4", "Ok", opt_fn_ok);
 
 // following grid-list will arrange the elements on the display
 M2_LIST(list_opt_menu) = {
-	&el_opt_zoom_label, &el_opt_zoom,
+	&el_opt_clck_label, &el_opt_clck_val_label,
+	&el_opt_pwm_top_label, &el_pwm_top_list,
+	&el_opt_pwm_freq_label, &el_opt_pwm_freq_val_label,
 	&el_opt_cancel, &el_opt_ok
 };
 M2_GRIDLIST(el_opt_grid, "c2", list_opt_menu);
@@ -110,47 +177,9 @@ M2_ALIGN(top_el_opt_menu, "-1|1W64H64", &el_opt_grid);
 
 // PWM SETTINGS MENU
 /******************************************************************************/
-void pwm_duty_index_to_str(uint8_t value, char *dest) {
-	switch(value) {
-		case 0: my_strcpy(dest, "low"); break;
-		case 1: my_strcpy(dest, "10%"); break;
-		case 2: my_strcpy(dest, "20%"); break;
-		case 3: my_strcpy(dest, "30%"); break;
-		case 4: my_strcpy(dest, "40%"); break;
-		case 5: my_strcpy(dest, "50%"); break;
-		case 6: my_strcpy(dest, "60%"); break;
-		case 7: my_strcpy(dest, "70%"); break;
-		case 8: my_strcpy(dest, "80%"); break;
-		case 9: my_strcpy(dest, "90%"); break;
-		case 10: my_strcpy(dest, "high"); break;
-	}
-}
-
-unsigned int pwm_duty_index_to_analog(uint8_t index) {
-	switch(index) {
-		case 0: return 0;
-		case 1: return TEN_PERCENTS;
-		case 2: return TEN_PERCENTS * 2;
-		case 3: return TEN_PERCENTS * 3;
-		case 4: return TEN_PERCENTS * 4;
-		case 5: return TEN_PERCENTS * 5;
-		case 6: return TEN_PERCENTS * 6;
-		case 7: return TEN_PERCENTS * 7;
-		case 8: return TEN_PERCENTS * 8;
-		case 9: return TEN_PERCENTS * 9;
-	}
-	return PWM_COUNTER_TOP;
-}
-
 void pwm_fn_ok(m2_el_fnarg_p fnarg) {
 	pwm_duty_array[pwm_menu_current_index] = pwm_menu_duty;
-
-	pwm_duty = pwm_duty_index_to_analog(pwm_menu_duty);
-	switch (pwm_menu_pin) {
-		case 5: OCR1A = pwm_duty; break;
-		case 6: OCR1B = pwm_duty; break;
-		case 7: OCR1C = pwm_duty; break;
-	}
+	pwm_save_duty(pwm_menu_pin, pwm_menu_duty);
 
 	m2_SetRoot(&top_el_root_menu);
 }
@@ -250,7 +279,7 @@ void draw_pwm(uint8_t x, uint8_t pos, uint8_t high_width, uint8_t low_width) {
 }
 
 void draw_pwm_chart(unsigned int pwm_duty, uint8_t y) {
-	uint8_t high_width = map(pwm_duty, 0, PWM_COUNTER_TOP, 0, pwm_cycle_width);
+	uint8_t high_width = map(pwm_duty, 0, pwm_counter_top, 0, pwm_cycle_width);
 	uint8_t low_width = pwm_cycle_width - high_width;
 	for (uint8_t x = 0; x < pwm_samples_count; x++) {
 		draw_pwm(x, y, high_width, low_width);
@@ -313,7 +342,7 @@ void init_sys(void) {
 inline void init_timers() {
 	// TIMER COUNTERS (65535 - max value for 16-bit timer)
 	TCNT1 = 0;				// BOTTOM value
-	ICR1 = PWM_COUNTER_TOP;	// TOP value
+	ICR1 = pwm_counter_top;	// TOP value
 	OCR1A = pwm_duty;		// COMPARE interrupt value
 	OCR1B = pwm_duty;
 	OCR1C = pwm_duty;
@@ -335,11 +364,11 @@ ISR (TIMER1_OVF_vect) {
 }
 
 ISR (TIMER1_COMPA_vect) {
-	if (OCR1A != PWM_COUNTER_TOP) LED1_OFF;
+	if (OCR1A != pwm_counter_top) LED1_OFF;
 }
 
 ISR (TIMER1_COMPB_vect) {
-	if (OCR1B != PWM_COUNTER_TOP) LED2_OFF;
+	if (OCR1B != pwm_counter_top) LED2_OFF;
 }
 
 int main(void) {

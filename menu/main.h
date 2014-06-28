@@ -2,8 +2,10 @@
 #define MAIN_H_
 
 #include <avr/interrupt.h>
+#include <avr/pgmspace.h>
 #include <avr/io.h>
 #include <stdlib.h>
+#include <string.h>
 #include "u8g.h"
 #include "m2.h"
 #include "m2utl.h"
